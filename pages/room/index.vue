@@ -13,12 +13,12 @@
     </template>
 
     <div v-show="isRoomJoined" class="my-video-container" @click="changeViewMode">
-      <video id="my-video" ref="myVideo" :srcObject.prop="stream" autoplay playsinline/>
+      <video id="my-video" :srcObject.prop="stream" autoplay playsinline/>
     </div>
 
     <div class="video-member-container">
       <div class="video-box" v-for="m in memberStreams" :key="m.peerId">
-        <!--div class="user-label">{{ m.peerId }}</div-->
+        <div class="user-label">{{ m.peerId }}</div>
         <video :id="m.peerId" :srcObject.prop="m.stream" autoplay playsinline/>
       </div>
     </div>
@@ -144,29 +144,9 @@
       console.log('changeViewMode')
     }
 
-    public get myVideoStyle(): Object {
-      console.log('this.$refs', this.$refs)
-      if (this.$ref !== {} && this.$refs.myVideo) {
-        const videoHeight = this.$refs.myVideo.videoHeight
-        const videoWidth = this.$refs.myVideo.videoWidth
-        return videoHeight > videoWidth ? {
-          height: `${videoHeight}px`,
-          width: `${videoHeight}px`,
-        } : {
-          height: `${videoWidth}px`,
-          width: `${videoWidth}px`,
-        }
-      } else {
-        return {
-          height: '100vh',
-          width: '100vw',
-        }
-      }
-    }
-
     async mounted() {
       this.stream = await navigator.mediaDevices.getUserMedia({
-        audio: false,
+        audio: true,
         video: true
       })
     }
@@ -195,12 +175,16 @@
     position: fixed;
     right: 10px;
     bottom: 10px;
+    height: 90px;
+    width: 90px;
     z-index: 10;
 
     #my-video {
       background-color: black;
       border-radius: 50%;
       border: solid 5px red;
+      height: 100%;
+      width: 100%;
     }
   }
 
@@ -208,14 +192,15 @@
     position: fixed;
     height: 100vh;
     width: 100vw;
-    display: grid;
-    grid-row: 1 / 4;
-    grid-column: 1 / 4;
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    flex-flow: wrap;
+    justify-content: center;
+    align-content: center;
 
     .video-box {
-      position: relative;
-      top: 0;
-      max-height: 40vh;
+      height: 50%;
 
       .user-label {
         position: relative;
@@ -231,9 +216,8 @@
       }
 
       video {
-        max-height: 40vh;
-        max-width: 100%;
         height: auto;
+        width: 100%;
       }
     }
   }
